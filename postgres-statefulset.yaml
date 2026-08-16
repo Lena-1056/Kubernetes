@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: banking-postgres
+
+spec:
+  serviceName: banking-postgres-service
+
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: banking-postgres
+
+  template:
+    metadata:
+      labels:
+        app: banking-postgres
+
+    spec:
+      containers:
+        - name: banking-postgres
+          image: postgres:17
+
+          ports:
+            - containerPort: 5432
+
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_USER
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_DB
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: banking-postgres-pvc

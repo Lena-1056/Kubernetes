@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: banking-backend-deployment
+  labels:
+    app: banking-backend
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: banking-backend
+
+  template:
+    metadata:
+      labels:
+        app: banking-backend
+
+    spec:
+      containers:
+        - name: banking-backend
+          image: banking-backend:latest
+
+          ports:
+            - containerPort: 8000
+
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_USER
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: banking-secret
+                  key: POSTGRES_DB
+
+            - name: POSTGRES_HOST
+              value: banking-postgres-service
+
+            - name: POSTGRES_PORT
+              value: "5432"
+
+            - name: DATABASE_URL
+              value: "postgresql+pg8000://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)"
