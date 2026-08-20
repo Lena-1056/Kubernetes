@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: banking-backend
-          image: banking-backend:latest
+          image: lenadeesh/banking-backend:latest
 
           ports:
             - containerPort: 8000
