@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: banking-frontend
-          image: banking-frontend:1.0.0
+          image: lenadeesh/banking-frontend:1.0.0
           ports:
             - containerPort: 3000
 
